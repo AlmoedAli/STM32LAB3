@@ -98,7 +98,7 @@
 //}
 
 #include "button.h"
-#include <main.h>
+#include "main.h"
 
 
 GPIO_TypeDef* buttonPort[3]= {button1_GPIO_Port, button2_GPIO_Port, button3_GPIO_Port};
@@ -123,18 +123,18 @@ void getInput()
 		state3Button[i]= HAL_GPIO_ReadPin(buttonPort[i], buttonPin[i]);
 		if ((state1Button[i]== state2Button[i]) && (state2Button[i]== state3Button[i]))
 		{
-			if (state0Button[i] != state1Button[i])
+			if (state0Button[i] != state1Button[i])  // state0 != state1
 			{
 				switch (state0Button[i])
 				{
-					case PRESS_STATE:
+					case PRESS_STATE:   // button did press
 						state0Button[i]= NORMAL_STATE;
 						if (durationPressShortButton[i] > 0)
 						{
 							flagButton[i]= PRESS_STATE;
 						}
 						break;
-					case NORMAL_STATE:
+					case NORMAL_STATE:  // button is pressed;
 						state0Button[i]= PRESS_STATE;
 						durationPressLongButton[i]= 100;
 						durationPressShortButton[i]= 20;
@@ -147,7 +147,7 @@ void getInput()
 			{
 				switch (state0Button[i])
 				{
-					case NORMAL_STATE:
+					case NORMAL_STATE:   // press didnot press
 						break;
 					case PRESS_STATE:
 						if (durationPressLongButton[i] > 0)
@@ -174,3 +174,69 @@ void getInput()
 		}
 	}
 }
+
+
+//#include "button.h"
+//#include "main.h"
+//
+//
+//GPIO_TypeDef* buttonPort[3]= {button1_GPIO_Port, button2_GPIO_Port, button3_GPIO_Port};
+//uint16_t buttonPin[3]= {button1_Pin, button2_Pin, button3_Pin};
+//
+//int state0Button[3]= {NORMAL_STATE, NORMAL_STATE, NORMAL_STATE};
+//int state1Button[3]= {NORMAL_STATE, NORMAL_STATE, NORMAL_STATE};
+//int state2Button[3]= {NORMAL_STATE, NORMAL_STATE, NORMAL_STATE};
+//int state3Button[3]= {NORMAL_STATE, NORMAL_STATE, NORMAL_STATE};
+//
+//int eventButtonPressed[3]= {0, 0, 0};
+//int eventButtonDrop[3]= {0, 0, 0};
+//
+//void getInput()
+//{
+//	for (int i= 0; i < 3; i++)
+//	{
+//		state1Button[i]= state2Button[i];
+//		state2Button[i]= state3Button[i];
+//		state3Button[i]= HAL_GPIO_ReadPin(buttonPort[i], buttonPin[i]);
+//		if ((state1Button[i]== state2Button[i]) && (state2Button[i]== state3Button[i]))
+//		{
+//			if (state0Button[i] != state1Button[i])  // state0 != state1
+//			{
+//				switch (state0Button[i])
+//				{
+//					case PRESS_STATE:   // button did press
+//						state0Button[i]= NORMAL_STATE;
+//						eventButtonDrop[i]+= 1;
+//						break;
+//					case NORMAL_STATE:  // button is pressed;
+//						state0Button[i]= PRESS_STATE;
+//						eventButtonPressed[i]+= 1;
+//						break;
+//					default:
+//						break;
+//				}
+//			}
+//			else
+//			{
+//				switch (state0Button[i])
+//				{
+//					case PRESS_STATE:
+//
+//						break;
+//					default:
+//						break;
+//				}
+//			}
+//		}
+//	}
+//}
+//
+//void resetAllEvent()
+//{
+//	for (int i=0 ; i < 3; i++)
+//	{
+//		eventButtonDrop[i]= 0;
+//		eventButtonPressed[i]= 0;
+//	}
+//}
+//

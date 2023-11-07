@@ -25,10 +25,9 @@
 #include <string.h>
 #include "softwareTimer.h"
 #include "button.h"
-#include "7SegLed.h"
 #include "normalMode.h"
-#include "advancedMode.h"
-#include "update7SEG.h"
+#include "deviceDriverSingleLed.h"
+#include "deviceDriver7Segment.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -43,6 +42,7 @@
 #define MODE2 2
 #define MODE3 3
 #define MODE4 4
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -54,7 +54,7 @@
 TIM_HandleTypeDef htim2;
 
 /* USER CODE BEGIN PV */
-int modeStatus= INITMODE;
+int modeStatus= MODE1;
 int flagAdvancedMode= 0;
 /* USER CODE END PV */
 
@@ -105,15 +105,17 @@ int main(void)
   /* USER CODE END 2 */
 
   /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  setTimer1(1);
-    setTimer2(-1);
-    setTimer3(-1);
+	offAllSingLEDs();
+	normalModeFunction();
+	setTimer2(100);
+	DISPLAYALL7SEG();
+	setTimer4(20);
+	setTimer1(1);
     while (1)
     {
   	 if (flag1== 1)  // flag for button
   	 {
-  		 setTimer1(10);
+  		 setTimer1(1);
   		 getInput();
   		 if (flagButton[0]== PRESS_STATE)
   		 {
@@ -123,55 +125,56 @@ int main(void)
   			 	case INITMODE:
   			 		modeStatus= MODE1;
   					flagAdvancedMode= 0;
-  					durationLedGreen= tempDurationLedGreen;
-  					durationLedYellow= tempDurationLedYellow;
-  					durationLedRed= tempDurationLedRed;
-  					update7SEGBuffer(MODE1, 3);
-  					mode1Function();
-  					setTimer2(1000);
-  					update7SEG();
-  					setTimer4(50);
-  				 	 break;
+  					tempDurationLedGreen= durationLedGreen;
+					tempDurationLedRed= durationLedRed;
+					tempDurationLedYellow= durationLedYellow;
+  					offAllSingLEDs();
+  					update7SEGBufferMode(MODE1);
+  					normalModeFunction();
+  					setTimer2(100);
+  					DISPLAYALL7SEG();
+  					setTimer4(20);
+  				 	break;
   				case MODE1:
   					modeStatus= MODE2;
   					flagAdvancedMode= 1;
-  					update7SEGBuffer(MODE2, 3);
-  					resetAllSingleLed();
-  					advancedModeFunction(2);
-  					setTimer3(500);
-  					update7SEGBuffer(durationLedRed, 1);
-  					update7SEGBuffer(durationLedRed, 2);
+  					offAllSingLEDs();
+  					blinkingRED();
+  					setTimer3(50);
+  					update7SEGBufferTraffic1(durationLedRed);
+  					update7SEGBufferTraffic2(durationLedRed);
+  					update7SEGBufferMode(MODE2);
   					break;
   				case MODE2:
   					modeStatus= MODE3;
   					flagAdvancedMode= 1;
-  					resetAllSingleLed();
-  					advancedModeFunction(3);
-  					setTimer3(500);
-  					update7SEGBuffer(durationLedYellow, 1);
-  					update7SEGBuffer(durationLedYellow, 2);
-  					update7SEGBuffer(MODE3, 3);
+  					offAllSingLEDs();
+  					blinkingYELLOW();
+  					setTimer3(50);
+  					update7SEGBufferTraffic1(durationLedYellow);
+					update7SEGBufferTraffic2(durationLedYellow);
+					update7SEGBufferMode(MODE3);
   					break;
   				case MODE3:
   					modeStatus= MODE4;
   					flagAdvancedMode= 1;
-  					resetAllSingleLed();
-  					advancedModeFunction(4);
-  					setTimer3(500);
-  					update7SEGBuffer(durationLedGreen, 1);
-  					update7SEGBuffer(durationLedGreen, 2);
-  					update7SEGBuffer(MODE4, 3);
+  					offAllSingLEDs();
+  					blinkingGREEN();
+  					setTimer3(50);
+  					update7SEGBufferTraffic1(durationLedGreen);
+					update7SEGBufferTraffic2(durationLedGreen);
+					update7SEGBufferMode(MODE4);
   					break;
   				case MODE4:
   					modeStatus= MODE1;
+  					flagAdvancedMode= 0;
   					tempDurationLedGreen= durationLedGreen;
   					tempDurationLedRed= durationLedRed;
   					tempDurationLedYellow= durationLedYellow;
-  					resetAllSingleLed();
-  					mode1Function();
-  					setTimer2(1000);
-  					flagAdvancedMode= 0;
-  					update7SEGBuffer(MODE1, 3);
+  					offAllSingLEDs();
+  					update7SEGBufferMode(MODE1);
+  					normalModeFunction();
+  					setTimer2(100);
   					break;
   				default:
   					break;
@@ -188,8 +191,8 @@ int main(void)
   					{
   						tempDurationLedRed= 0;
   					}
-  					update7SEGBuffer(tempDurationLedRed, 1);
-  					update7SEGBuffer(tempDurationLedRed, 2);
+  					update7SEGBufferTraffic1(tempDurationLedRed);
+  					update7SEGBufferTraffic2(tempDurationLedRed);
   					break;
   				case MODE3:
   					tempDurationLedYellow++;
@@ -197,8 +200,8 @@ int main(void)
   					{
   						tempDurationLedYellow= 0;
   					}
-  					update7SEGBuffer(tempDurationLedYellow, 1);
-  					update7SEGBuffer(tempDurationLedYellow, 2);
+					update7SEGBufferTraffic1(tempDurationLedYellow);
+					update7SEGBufferTraffic2(tempDurationLedYellow);
   					break;
   				case MODE4:
   					tempDurationLedGreen++;
@@ -206,8 +209,8 @@ int main(void)
   					{
   						tempDurationLedGreen= 0;
   					}
-  					update7SEGBuffer(tempDurationLedGreen, 1);
-  					update7SEGBuffer(tempDurationLedGreen, 2);
+					update7SEGBufferTraffic1(tempDurationLedGreen);
+					update7SEGBufferTraffic2(tempDurationLedGreen);
   					break;
   				default:
   					break;
@@ -216,43 +219,53 @@ int main(void)
   		 if (flagButton[2]== PRESS_STATE)
   		 {
   			 flagButton[2]= NORMAL_STATE;
-  			 durationLedGreen= tempDurationLedGreen;
-  			 durationLedRed= tempDurationLedRed;
-  			 durationLedYellow= tempDurationLedYellow;
-  			 statusTraffic1= INIT1;
-  			 statusTraffic2= INIT2;
-  			 if (modeStatus== 1 || modeStatus== 0)
+  			 if (tempDurationLedRed != tempDurationLedYellow + tempDurationLedGreen)
   			 {
-  				 mode1Function();
-  				 setTimer2(1000);
+				update7SEGBufferTraffic1(88);
+				update7SEGBufferTraffic2(88);
+				update7SEGBufferMode(8);
+  				 onAllSingLEDs();
+  				 modeStatus= INITMODE;
+  			 }
+  			 else
+  			 {
+				 durationLedGreen= tempDurationLedGreen;
+				 durationLedRed= tempDurationLedRed;
+				 durationLedYellow= tempDurationLedYellow;
+				 statusTraffic1= INIT1;
+				 statusTraffic2= INIT2;
+				 modeStatus= INITMODE;
+				 if (modeStatus== 1 || modeStatus== 0)
+				 {
+					 normalModeFunction();
+					 setTimer2(100);
+				 }
   			 }
   		 }
   	 }
   	 if (flag2== 1)  // flag normal led
   	 {
-  		 setTimer2(1000);
+  		 setTimer2(100);
   		 if (flagAdvancedMode== 0)
   		 {
-  			 mode1Function();
+  			 normalModeFunction();
   		 }
   	 }
   	 if (flag3== 1)  // flag for model modify
   	 {
-  		 setTimer3(500);
+  		 setTimer3(50);
   		 if (flagAdvancedMode== 1)
   		 {
   			 switch (modeStatus)
   			 {
-  				case MODE1:
-  					break;
   				case MODE2:
-  					advancedModeFunction(2);
+  					blinkingRED();
   					break;
   				case MODE3:
-  					advancedModeFunction(3);
+  					blinkingYELLOW();
   					break;
   				case MODE4:
-  					advancedModeFunction(4);
+  					blinkingGREEN();
   					break;
   				default:
   					break;
@@ -261,8 +274,8 @@ int main(void)
   	 }
   	 if (flag4== 1)
   	 {
-  		 update7SEG();
-  		 setTimer4(50);
+  		 DISPLAYALL7SEG();
+  		 setTimer4(20);
   	 }
 
     /* USER CODE END WHILE */
@@ -326,7 +339,7 @@ static void MX_TIM2_Init(void)
 
   /* USER CODE END TIM2_Init 1 */
   htim2.Instance = TIM2;
-  htim2.Init.Prescaler = 799;
+  htim2.Init.Prescaler = 7999;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim2.Init.Period = 9;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;

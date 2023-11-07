@@ -1,14 +1,14 @@
 /*
- * update7SEG.c
+ * physical7Segment.c
  *
- *  Created on: Nov 2, 2023
+ *  Created on: Nov 7, 2023
  *      Author: TVB09
  */
 
 
-#include "update7SEG.h"
-#include "7SegLed.h"
+#include "physical7Segment.h"
 #include <main.h>
+
 
 #define INIT  0
 #define SEG7_1ON 1
@@ -18,29 +18,63 @@
 #define SEG7_5ON 5
 
 int status7SEG= INIT;
-int led_buffer[5]= {1, 2, 3, 4, 5};
+int led_buffer[5]= {1, 2, 3, 4, 1};
 
-void update7SEGBuffer(int time, int index_traffic)
+void show7SEG(GPIO_PinState A, GPIO_PinState B, GPIO_PinState C, GPIO_PinState D, GPIO_PinState E,
+				GPIO_PinState F, GPIO_PinState G)
 {
-	switch (index_traffic)
+	HAL_GPIO_WritePin(segA_GPIO_Port, segA_Pin, A);
+	HAL_GPIO_WritePin(segB_GPIO_Port, segB_Pin, B);
+	HAL_GPIO_WritePin(segC_GPIO_Port, segC_Pin, C);
+	HAL_GPIO_WritePin(segD_GPIO_Port, segD_Pin, D);
+	HAL_GPIO_WritePin(segE_GPIO_Port, segE_Pin, E);
+	HAL_GPIO_WritePin(segF_GPIO_Port, segF_Pin, F);
+	HAL_GPIO_WritePin(segG_GPIO_Port, segG_Pin, G);
+}
+
+void display(int num)
+{
+	switch (num)
 	{
+		case 0:
+			show7SEG(0, 0, 0, 0, 0, 0, 1);
+			break;
 		case 1:
-			led_buffer[0]= time/10;
-			led_buffer[1]= time%10;
+			show7SEG(1, 0, 0, 1,  1, 1, 1);
 			break;
 		case 2:
-			led_buffer[2]= time/10;
-			led_buffer[3]= time %10;
+			show7SEG(0, 0, 1, 0, 0, 1, 0);
 			break;
+
 		case 3:
-			led_buffer[4]= time;
+			show7SEG(0, 0, 0, 0, 1, 1, 0);
+			break;
+		case 4:
+			show7SEG(1, 0, 0, 1, 1, 0, 0);
+			break;
+		case 5:
+			show7SEG(0, 1, 0, 0, 1, 0, 0);
+			break;
+		case 6:
+			show7SEG(0, 1, 0, 0, 0, 0, 0);
+			break;
+		case 7:
+			show7SEG(0, 0, 0, 1, 1, 1, 1);
+			break;
+		case 8:
+			show7SEG(0, 0, 0, 0, 0, 0, 0);
+			break;
+		case 9:
+			show7SEG(0, 0, 0, 0, 1, 0, 0);
 			break;
 		default:
+			show7SEG(0, 0, 0, 0, 1, 0, 0);
 			break;
 	}
 }
 
-void update7SEG()
+
+void Scan7SEG()
 {
 	switch (status7SEG)
 	{
@@ -62,8 +96,8 @@ void update7SEG()
 		case SEG7_2ON:
 			HAL_GPIO_TogglePin(en1_GPIO_Port, en1_Pin);
 			HAL_GPIO_TogglePin(en2_GPIO_Port, en2_Pin);
-			status7SEG= SEG7_3ON;
 			display(led_buffer[2]);
+			status7SEG= SEG7_3ON;
 			break;
 		case SEG7_3ON:
 			HAL_GPIO_TogglePin(en2_GPIO_Port, en2_Pin);
@@ -88,3 +122,5 @@ void update7SEG()
 	}
 
 }
+
+
