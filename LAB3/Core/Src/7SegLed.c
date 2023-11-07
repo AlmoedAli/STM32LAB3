@@ -19,6 +19,8 @@ void show7SEG(GPIO_PinState A, GPIO_PinState B, GPIO_PinState C, GPIO_PinState D
 	HAL_GPIO_WritePin(segE_GPIO_Port, segE_Pin, E);
 	HAL_GPIO_WritePin(segF_GPIO_Port, segF_Pin, F);
 	HAL_GPIO_WritePin(segG_GPIO_Port, segG_Pin, G);
+
+	//Binh
 }
 
 void display(int num)
