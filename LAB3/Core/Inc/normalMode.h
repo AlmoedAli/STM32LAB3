@@ -20,7 +20,6 @@
 #define STATUS2_3 3
 #define STATUS2_4 4
 
-
 extern int statusTraffic1;
 extern int statusTraffic2;
 
@@ -28,13 +27,10 @@ extern int durationLedRed;
 extern int durationLedGreen;
 extern int durationLedYellow;
 
-
 extern int tempDurationLedRed;
 extern int tempDurationLedGreen;
 extern int tempDurationLedYellow;
 
 void normalModeFunction();
-
-
 
 #endif /* INC_NORMALMODE_H_ */

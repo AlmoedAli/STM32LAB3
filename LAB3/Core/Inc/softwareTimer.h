@@ -26,5 +26,4 @@ void setTimer3(int duration);
 void setTimer4(int duration);
 void runTimer();
 
-
 #endif /* INC_SOFTWARETIMER_H_ */

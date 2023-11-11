@@ -62,5 +62,3 @@ void onSingleGreenTraffic2()
 {
 	controlSingleLed(TRAFFIC2, GREENNORMALMODE);
 }
-
-

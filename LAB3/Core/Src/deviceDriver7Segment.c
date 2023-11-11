@@ -5,7 +5,6 @@
  *      Author: TVB09
  */
 
-
 #include "deviceDriver7Segment.h"
 #include "physical7Segment.h"
 
@@ -13,22 +12,21 @@ void update7SEGBuffer(int time, int index_traffic)
 {
 	switch (index_traffic)
 	{
-		case 1:
-			led_buffer[0]= time/10;
-			led_buffer[1]= time%10;
-			break;
-		case 2:
-			led_buffer[2]= time/10;
-			led_buffer[3]= time %10;
-			break;
-		case 3:
-			led_buffer[4]= time;
-			break;
-		default:
-			break;
+	case 1:
+		led_buffer[0] = time / 10;
+		led_buffer[1] = time % 10;
+		break;
+	case 2:
+		led_buffer[2] = time / 10;
+		led_buffer[3] = time % 10;
+		break;
+	case 3:
+		led_buffer[4] = time;
+		break;
+	default:
+		break;
 	}
 }
-
 
 void update7SEGBufferTraffic1(int time)
 {
