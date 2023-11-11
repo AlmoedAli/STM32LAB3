@@ -20,7 +20,6 @@
 #define STATUS2_3 3
 #define STATUS2_4 4
 
-#include "7SegLed.h"
 
 extern int statusTraffic1;
 extern int statusTraffic2;
@@ -34,6 +33,8 @@ extern int tempDurationLedRed;
 extern int tempDurationLedGreen;
 extern int tempDurationLedYellow;
 
-void mode1Function();
+void normalModeFunction();
+
+
 
 #endif /* INC_NORMALMODE_H_ */

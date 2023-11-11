@@ -98,7 +98,7 @@
 //}
 
 #include "button.h"
-#include <main.h>
+#include "main.h"
 
 
 GPIO_TypeDef* buttonPort[3]= {button1_GPIO_Port, button2_GPIO_Port, button3_GPIO_Port};
@@ -123,18 +123,18 @@ void getInput()
 		state3Button[i]= HAL_GPIO_ReadPin(buttonPort[i], buttonPin[i]);
 		if ((state1Button[i]== state2Button[i]) && (state2Button[i]== state3Button[i]))
 		{
-			if (state0Button[i] != state1Button[i])
+			if (state0Button[i] != state1Button[i])  // state0 != state1
 			{
 				switch (state0Button[i])
 				{
-					case PRESS_STATE:
+					case PRESS_STATE:   // button did press
 						state0Button[i]= NORMAL_STATE;
 						if (durationPressShortButton[i] > 0)
 						{
 							flagButton[i]= PRESS_STATE;
 						}
 						break;
-					case NORMAL_STATE:
+					case NORMAL_STATE:  // button is pressed;
 						state0Button[i]= PRESS_STATE;
 						durationPressLongButton[i]= 100;
 						durationPressShortButton[i]= 20;
@@ -147,7 +147,7 @@ void getInput()
 			{
 				switch (state0Button[i])
 				{
-					case NORMAL_STATE:
+					case NORMAL_STATE:   // press didnot press
 						break;
 					case PRESS_STATE:
 						if (durationPressLongButton[i] > 0)
@@ -174,3 +174,4 @@ void getInput()
 		}
 	}
 }
+

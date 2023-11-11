@@ -6,21 +6,21 @@
  */
 
 
+#include <deviceDriver7Segment.h>
 #include "normalMode.h"
-#include "7SegLed.h"
-#include "update7SEG.h"
 #include <main.h>
+#include "deviceDriverSingleLed.h"
 
 int statusTraffic1 = INIT1;
 int statusTraffic2= INIT2;
 
-int durationLedRed= 0;
-int durationLedGreen= 0;
-int durationLedYellow= 0;
-
-int tempDurationLedRed= 5;
-int tempDurationLedGreen= 3;
+int tempDurationLedRed= 7;
+int tempDurationLedGreen= 5;
 int tempDurationLedYellow= 2;
+
+int durationLedRed= 7;
+int durationLedGreen= 5;
+int durationLedYellow= 2;
 
 int counterLedRed1;
 int counterLedRed2;
@@ -29,17 +29,15 @@ int counterLedGreen2;
 int counterLedYellow1;
 int counterLedYellow2;
 
-void mode1Function()
+void normalModeFunction()
 {
 	switch (statusTraffic1)
 	{
 		case INIT1:
-			HAL_GPIO_WritePin(RED1_GPIO_Port, RED1_Pin, SET);
-			HAL_GPIO_WritePin(YELLOW1_GPIO_Port, YELLOW1_Pin, RESET);   // red
-			HAL_GPIO_WritePin(GREEN1_GPIO_Port, GREEN1_Pin, RESET);
 			counterLedRed1= durationLedRed;
-			update7SEGBuffer(counterLedRed1, 1);
 			statusTraffic1= STATUS1_1;
+			onSingleRedTraffic1();
+			update7SEGBufferTraffic1(counterLedRed1);
 			break;
 		case STATUS1_1:
 			if (counterLedRed1 > 0)
@@ -47,19 +45,15 @@ void mode1Function()
 				counterLedRed1--;
 				if (counterLedRed1 <= 0)
 				{
-					HAL_GPIO_WritePin(RED1_GPIO_Port, RED1_Pin, RESET);
-					HAL_GPIO_WritePin(YELLOW1_GPIO_Port, YELLOW1_Pin, RESET);   // green
-					HAL_GPIO_WritePin(GREEN1_GPIO_Port, GREEN1_Pin, SET);
-					statusTraffic1= STATUS1_2;
 					counterLedGreen1= durationLedGreen;
-					update7SEGBuffer(counterLedGreen1, 1);
+					statusTraffic1= STATUS1_2;
+					onSingleGreenTraffic1();
+					update7SEGBufferTraffic1(counterLedGreen1);
 				}
 				else
 				{
-					HAL_GPIO_WritePin(RED1_GPIO_Port, RED1_Pin, SET);
-					HAL_GPIO_WritePin(YELLOW1_GPIO_Port, YELLOW1_Pin, RESET);   // red
-					HAL_GPIO_WritePin(GREEN1_GPIO_Port, GREEN1_Pin, RESET);
-					update7SEGBuffer(counterLedRed1, 1);
+					onSingleRedTraffic1();
+					update7SEGBufferTraffic1(counterLedRed1);
 				}
 			}
 			break;
@@ -69,19 +63,15 @@ void mode1Function()
 				counterLedGreen1--;
 				if (counterLedGreen1 <= 0)
 				{
-					HAL_GPIO_WritePin(RED1_GPIO_Port, RED1_Pin, RESET);
-					HAL_GPIO_WritePin(YELLOW1_GPIO_Port, YELLOW1_Pin, SET);  // yellow
-					HAL_GPIO_WritePin(GREEN1_GPIO_Port, GREEN1_Pin, RESET);
-					statusTraffic1= STATUS1_3;
 					counterLedYellow1= durationLedYellow;
-					update7SEGBuffer(counterLedYellow1, 1);
+					statusTraffic1= STATUS1_3;
+					onSingleYellowTraffic1();
+					update7SEGBufferTraffic1(counterLedYellow1);
 				}
 				else
 				{
-					HAL_GPIO_WritePin(RED1_GPIO_Port, RED1_Pin, RESET);
-					HAL_GPIO_WritePin(YELLOW1_GPIO_Port, YELLOW1_Pin, RESET);   // green
-					HAL_GPIO_WritePin(GREEN1_GPIO_Port, GREEN1_Pin, SET);
-					update7SEGBuffer(counterLedGreen1, 1);
+					onSingleGreenTraffic1();
+					update7SEGBufferTraffic1(counterLedGreen1);
 				}
 			}
 			break;
@@ -91,19 +81,15 @@ void mode1Function()
 				counterLedYellow1--;
 				if (counterLedYellow1 <= 0)
 				{
-					HAL_GPIO_WritePin(RED1_GPIO_Port, RED1_Pin, SET);
-					HAL_GPIO_WritePin(YELLOW1_GPIO_Port, YELLOW1_Pin, RESET);
-					HAL_GPIO_WritePin(GREEN1_GPIO_Port, GREEN1_Pin, RESET);   // green
-					statusTraffic1= STATUS1_1;
 					counterLedRed1= durationLedRed;
-					update7SEGBuffer(counterLedRed1, 1);
+					statusTraffic1= STATUS1_1;
+					onSingleRedTraffic1();
+					update7SEGBufferTraffic1(counterLedRed1);
 				}
 				else
 				{
-					HAL_GPIO_WritePin(RED1_GPIO_Port, RED1_Pin, RESET);
-					HAL_GPIO_WritePin(YELLOW1_GPIO_Port, YELLOW1_Pin, SET);  // yellow
-					HAL_GPIO_WritePin(GREEN1_GPIO_Port, GREEN1_Pin, RESET);
-					update7SEGBuffer(counterLedYellow1, 1);
+					onSingleYellowTraffic1();
+					update7SEGBufferTraffic1(counterLedYellow1);
 				}
 			}
 			break;
@@ -113,12 +99,10 @@ void mode1Function()
 	switch (statusTraffic2)
 	{
 		case INIT2:
-			HAL_GPIO_WritePin(RED2_GPIO_Port, RED2_Pin, RESET);
-			HAL_GPIO_WritePin(YELLOW2_GPIO_Port, YELLOW2_Pin, RESET);   // green
-			HAL_GPIO_WritePin(GREEN2_GPIO_Port, GREEN2_Pin, SET);
-			counterLedGreen2= durationLedGreen;
-			update7SEGBuffer(counterLedGreen2, 2);
 			statusTraffic2= STATUS2_1;
+			counterLedGreen2= durationLedGreen;
+			onSingleGreenTraffic2();
+			update7SEGBufferTraffic2(counterLedGreen2);
 			break;
 		case STATUS2_1:
 			if (counterLedGreen2 > 0)
@@ -126,19 +110,15 @@ void mode1Function()
 				counterLedGreen2--;
 				if (counterLedGreen2 <= 0)
 				{
-					HAL_GPIO_WritePin(RED2_GPIO_Port, RED2_Pin, RESET);
-					HAL_GPIO_WritePin(YELLOW2_GPIO_Port, YELLOW2_Pin, SET);   // yellow
-					HAL_GPIO_WritePin(GREEN2_GPIO_Port, GREEN2_Pin, RESET);
+					onSingleYellowTraffic2();
 					counterLedYellow2= durationLedYellow;
 					statusTraffic2= STATUS2_2;
-					update7SEGBuffer(counterLedYellow2, 2);
+					update7SEGBufferTraffic2(counterLedYellow2);
 				}
 				else
 				{
-					HAL_GPIO_WritePin(RED2_GPIO_Port, RED2_Pin, RESET);
-					HAL_GPIO_WritePin(YELLOW2_GPIO_Port, YELLOW2_Pin, RESET);   // green
-					HAL_GPIO_WritePin(GREEN2_GPIO_Port, GREEN2_Pin, SET);
-					update7SEGBuffer(counterLedGreen2, 2);
+					onSingleGreenTraffic2();
+					update7SEGBufferTraffic2(counterLedGreen2);
 				}
 			}
 			break;
@@ -148,19 +128,15 @@ void mode1Function()
 				counterLedYellow2--;
 				if (counterLedYellow2 <= 0)
 				{
-					HAL_GPIO_WritePin(RED2_GPIO_Port, RED2_Pin, SET);
-					HAL_GPIO_WritePin(YELLOW2_GPIO_Port, YELLOW2_Pin, RESET);
-					HAL_GPIO_WritePin(GREEN2_GPIO_Port, GREEN2_Pin, RESET);   // red
 					counterLedRed2= durationLedRed;
 					statusTraffic2= STATUS2_3;
-					update7SEGBuffer(counterLedRed2, 2);
+					onSingleRedTraffic2();
+					update7SEGBufferTraffic2(counterLedRed2);
 				}
 				else
 				{
-					HAL_GPIO_WritePin(RED2_GPIO_Port, RED2_Pin, RESET);
-					HAL_GPIO_WritePin(YELLOW2_GPIO_Port, YELLOW2_Pin, SET);   // yellow
-					HAL_GPIO_WritePin(GREEN2_GPIO_Port, GREEN2_Pin, RESET);
-					update7SEGBuffer(counterLedYellow2, 2);
+					onSingleYellowTraffic2();
+					update7SEGBufferTraffic2(counterLedYellow2);
 				}
 			}
 			break;
@@ -170,19 +146,15 @@ void mode1Function()
 				counterLedRed2--;
 				if (counterLedRed2 <= 0)
 				{
-					HAL_GPIO_WritePin(RED2_GPIO_Port, RED2_Pin, RESET);
-					HAL_GPIO_WritePin(YELLOW2_GPIO_Port, YELLOW2_Pin, RESET);
-					HAL_GPIO_WritePin(GREEN2_GPIO_Port, GREEN2_Pin, SET);   // green
 					counterLedGreen2= durationLedGreen;
 					statusTraffic2= STATUS2_1;
-					update7SEGBuffer(counterLedGreen2, 2);
+					onSingleGreenTraffic2();
+					update7SEGBufferTraffic2(counterLedGreen2);
 				}
 				else
 				{
-					HAL_GPIO_WritePin(RED2_GPIO_Port, RED2_Pin, SET);
-					HAL_GPIO_WritePin(YELLOW2_GPIO_Port, YELLOW2_Pin, RESET);
-					HAL_GPIO_WritePin(GREEN2_GPIO_Port, GREEN2_Pin, RESET);   //
-					update7SEGBuffer(counterLedRed2, 2);
+					onSingleRedTraffic2();
+					update7SEGBufferTraffic2(counterLedRed2);
 				}
 			}
 			break;
